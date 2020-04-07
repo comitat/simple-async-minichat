@@ -1,8 +1,9 @@
 import asyncio
 
 class ServerProtocol (asyncio.Protocol):
-    login : str
+    login : str = None
     server : 'Server'
+    transport : transports.Transport
 
     def __init__(self, server: 'Server'):
         self.server = server
@@ -10,12 +11,28 @@ class ServerProtocol (asyncio.Protocol):
     def data_received(self, data: bytes):
         print(data)
 
-    def connection_made(self, transport: transports.Transport):
-        print ("OK")
-    
-    def connection_lost(self, exception):
-        print("Lost")
+        decoded = data.decode()
 
+        if self.login is not None:
+           self.send_message(decoded)
+        else:
+            if decoded.startswith("login:"):
+                self.login = decoded.replace("login:", "").replace ("\r\n", "")
+                self.transport.write(f"Hi, {self.login}!\n".encode())
+            else:
+                self.transport.write("Incorrect login\n".encode())
+
+    def connection_made(self, transport: transports.Transport):
+        self.server.clients.append(self)
+        self.transport = transport
+        print("New client on")
+
+    def connection_lost(self, exception):
+        self.server.clients.remove(self)
+        print("Client off")
+
+    def send_message(self, content: str):
+        pass
 
 class Server:
     clients: list
