@@ -15,6 +15,15 @@ class Server:
     async def start(self):
         loop = asyncio.get_running_loop()
 
-        coroutine = loop.create_server(
-            0, '127.0.0.1', 8888
+        coroutine = await loop.create_server(
+            self.build_protocol, '127.0.0.1', 8888
         )
+
+    print ("Server Start")
+
+    await coroutine.serve_forever()
+
+
+process = Server()
+
+asyncio.run(process.start())
