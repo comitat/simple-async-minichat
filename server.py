@@ -1,7 +1,21 @@
 import asyncio
 
-class ServerProtocol:
-    pass
+class ServerProtocol (asyncio.Protocol):
+    login : str
+    server : 'Server'
+
+    def __init__(self, server: 'Server'):
+        self.server = server
+
+    def data_received(self, data: bytes):
+        print(data)
+
+    def connection_made(self, transport: transports.Transport):
+        print ("OK")
+    
+    def connection_lost(self, exception):
+        print("Lost")
+
 
 class Server:
     clients: list
@@ -26,4 +40,7 @@ class Server:
 
 process = Server()
 
-asyncio.run(process.start())
+try:
+    asyncio.run(process.start())
+except KeyboardInterrupt:
+    print("Server stoped")
