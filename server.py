@@ -20,10 +20,10 @@ class ServerProtocol (asyncio.Protocol):
             if decoded.startswith("login:"):
             #    self.login = decoded.replace("login:", "").replace ("\r\n", "")
             #    self.transport.write(f"Hi, {self.login}!\n".encode())
-            newlogin = decoded.replace("login:", "").replace("\r\n", "")
+                newlogin = decoded.replace("login:", "").replace("\r\n", "")
                 if self.login_is_correct(newlogin):
                     self.login = newlogin
-                    self.transport.write(f"Привет, {self.login}!\n".encode())
+                    self.transport.write(f"Hi, {self.login}!\n".encode())
                     self.send_history()
             
             else:
