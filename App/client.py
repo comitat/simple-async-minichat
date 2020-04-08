@@ -34,3 +34,36 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.setupUi(self)
 
         self.message_button.clicked.connect(self.button_handler)
+
+    def button_handler(self):
+        message_text = self.message_input.text()
+        self.message_input.clear()
+        self.protocol.send_data(message_text)
+
+    def append_text(self, content: str):
+        self.message_box.appendPlainText(content)
+        
+    def build_protocol(self):
+        self.protocol = ClientProtocol(self)
+        return self.protocol
+
+    async def start(self):
+        self.show()
+
+        event_loop = asyncio.get_running_loop()
+
+        coroutine = event_loop.create_connection(
+            self.build_protocol, "127.0.0.1", 8888
+        )
+
+        await asyncio.wait_for(coroutine, 1000)
+
+
+app = QApplication()
+loop = QEventLoop(app)
+asyncio.set_event_loop(loop)
+
+window = MainWindow()
+
+loop.create_task(window.start())
+loop.run_forever()
