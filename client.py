@@ -34,3 +34,17 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.setupUi(self)
 
         self.message_button.clicked.connect(self.button_handler)
+
+    def button_handler(self):
+        message_text = self.message_input.text()
+        self.message_input.clear()
+        self.protocol.send_data(message_text)
+
+    def append_text(self, content: str):
+        self.message_box.appendPlainText(content)
+
+
+window = MainWindow()
+
+loop.create_task(window.start())
+loop.run_forever()
