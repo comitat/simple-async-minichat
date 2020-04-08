@@ -25,6 +25,8 @@ class ServerProtocol (asyncio.Protocol):
                     self.login = newlogin
                     self.transport.write(f"Hi, {self.login}!\n".encode())
                     self.send_history()
+                else:
+                    self.transport.write("This login busy\n".encode())
             
             else:
                 self.transport.write("Incorrect login\n".encode())
