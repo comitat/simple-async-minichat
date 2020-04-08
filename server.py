@@ -1,4 +1,5 @@
 import asyncio
+from asyncio import transports
 
 class ServerProtocol (asyncio.Protocol):
     login : str = None
@@ -32,7 +33,10 @@ class ServerProtocol (asyncio.Protocol):
         print("Client off")
 
     def send_message(self, content: str):
-        pass
+        message = f"{self.login}: {content}\n"
+
+        for user in self.server.clients:
+            user.transport.write(message.encode())
 
 class Server:
     clients: list
